@@ -1,9 +1,23 @@
-<h1>{{ question.question_text }}</h1>
-
+{% extends "polls/base.html" %}
+{% block titleappendix %}details{% endblock %}
+{% block mainbody %}
+<h1>{{ question.question_text }}{{ question.highest_value }}</h1>
 <ul>
   {% for choice in question.choice_set.all %}
     <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    <div class="progress">
+  <div class="progress-bar"
+       role="progressbar"
+       aria-valuenow="{{ choice.votes }}"
+       aria-valuemin="0"
+       aria-valuemax="100"
+       style="width: {{ choice.vote_percent }}%;"
+       >
+    <span class="sr-only">{{ choice.vote_percent }}% Complete</span>
+  </div>
+</div>
   {% endfor %}
 </ul>
 
 <a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+{% endblock %}
