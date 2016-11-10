@@ -1,7 +1,7 @@
 {% extends "polls/base.html" %}
 {% block titleappendix %}details{% endblock %}
 {% block mainbody %}
-<h1>{{ question.question_text }}{{ question.highest_value }}</h1>
+<h1>{{ question.question_text }}</h1>
 <ul>
   {% for choice in question.choice_set.all %}
     <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
