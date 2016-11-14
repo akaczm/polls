@@ -48,3 +48,21 @@ def vote(request, question_id):
         selected_choice.votes += 1
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(p.id,)))
+
+
+def addpoll(request):
+    return render(request, 'polls/addpoll.html')
+
+
+def addpollpost(request):
+    if request.POST['question_title'] != "":
+        question = Question.objects.create(question_text=request.POST
+                                           ['question_title'],
+                                           pub_date=timezone.now())
+    if request.POST['1'] != "":
+        Choice.objects.create(question=question, choice_text=request.POST['1'])
+    if request.POST['2'] != "":
+        Choice.objects.create(question=question, choice_text=request.POST['2'])
+    if request.POST['3'] != "":
+        Choice.objects.create(question=question, choice_text=request.POST['3'])
+    return HttpResponseRedirect(reverse('polls:index'))
