@@ -59,10 +59,17 @@ def addpollpost(request):
         question = Question.objects.create(question_text=request.POST
                                            ['question_title'],
                                            pub_date=timezone.now())
-    if request.POST['1'] != "":
-        Choice.objects.create(question=question, choice_text=request.POST['1'])
-    if request.POST['2'] != "":
-        Choice.objects.create(question=question, choice_text=request.POST['2'])
-    if request.POST['3'] != "":
-        Choice.objects.create(question=question, choice_text=request.POST['3'])
+        if request.POST['1'] != "":
+            Choice.objects.create(question=question,
+                                  choice_text=request.POST['1'])
+        if request.POST['2'] != "":
+            Choice.objects.create(question=question,
+                                  choice_text=request.POST['2'])
+        if request.POST['3'] != "":
+            Choice.objects.create(question=question,
+                                  choice_text=request.POST['3'])
+    else:
+        return render(request, 'polls/addpoll.html', {
+            'error_message': "You didn't add a title",
+        })
     return HttpResponseRedirect(reverse('polls:index'))

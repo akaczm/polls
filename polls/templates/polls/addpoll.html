@@ -1,6 +1,10 @@
 {% extends "polls/base.html" %}
 {% block mainbody %}
-
+{% if error_message %}
+<div class="alert alert-danger" role="alert">
+<p><strong>{{ error_message }}</strong></p>
+</div>
+{% endif %}
 <form action="{% url 'polls:addpollpost' %}" method="post">
   {% csrf_token %}
   <div class="form-group">
