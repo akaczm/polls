@@ -1,5 +1,8 @@
 import datetime
 
+from random import choice
+from string import ascii_uppercase
+
 from django.utils import timezone
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -134,4 +137,21 @@ class QuestionAddInterfaceTests(TestCase):
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
             ['<Question: TestQuestion>']
+        )
+
+    def test_post_too_long(self):
+        """
+        The view shouldn't let too long post calls to get validated
+        """
+        self.client.post(reverse('polls:addpoll'),
+                         {'question_title': (''.join(choice
+                                                     (ascii_uppercase)
+                                                     for i in range(300))),
+                          'answer1': 'Option1',
+                          'answer2': 'Option2',
+                          'answer3': 'Option3', })
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            []
         )
