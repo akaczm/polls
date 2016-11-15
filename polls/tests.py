@@ -72,27 +72,27 @@ class QuestionViewTests(TestCase):
             ['<Question: Past question.>']
         )
 
-        def test_index_view_with_a_future_and_past_question(self):
-            """Only past questions should be displayed"""
-            create_question(question_text="Past question.", days=-30)
-            create_question(question_text="Future question", days=2)
-            response = self.client.get(reverse('polls:index'))
-            self.assertQuerysetEqual(
-                response.context['latest_question_list'],
-                ['<Question: Past question.>']
-            )
+    def test_index_view_with_a_future_and_past_question(self):
+        """Only past questions should be displayed"""
+        create_question(question_text="Past question.", days=-30)
+        create_question(question_text="Future question", days=2)
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            ['<Question: Past question.>']
+        )
 
-        def test_index_view_with_two_past_questions(self):
-            """
-            The questions index can display multiple questions
-            """
-            create_question(question_text="Past question 1", days=-10)
-            create_question(question_text="Past question 2", days=-5)
-            response = self.client.get(reverse('polls:index'))
-            self.assertQuerysetEqual(
-                response.context['latest_question_list'],
-                ['<Question:Past question 2', '<Question:Past question 1']
-            )
+    def test_index_view_with_two_past_questions(self):
+        """
+        The questions index can display multiple questions
+        """
+        create_question(question_text="Past question 1", days=-10)
+        create_question(question_text="Past question 2", days=-5)
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            ['<Question: Past question 2>', '<Question: Past question 1>']
+        )
 
 
 class QuestionIndexDetailTests(TestCase):
@@ -118,3 +118,20 @@ class QuestionIndexDetailTests(TestCase):
                                            args=(past_question.id,)))
         self.assertContains(response, past_question.question_text,
                             status_code=200)
+
+
+class QuestionAddInterfaceTests(TestCase):
+    def test_post_handling(self):
+        """
+        The view should interpret POST data properly
+        """
+        self.client.post(reverse('polls:addpollpost'),
+                         {'question_title': 'TestQuestion',
+                          '1': 'Option1',
+                          '2': 'Option2',
+                          '3': 'Option3', })
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            ['<Question: TestQuestion>']
+        )
