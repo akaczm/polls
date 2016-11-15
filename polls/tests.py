@@ -125,11 +125,11 @@ class QuestionAddInterfaceTests(TestCase):
         """
         The view should interpret POST data properly
         """
-        self.client.post(reverse('polls:addpollpost'),
+        self.client.post(reverse('polls:addpoll'),
                          {'question_title': 'TestQuestion',
-                          '1': 'Option1',
-                          '2': 'Option2',
-                          '3': 'Option3', })
+                          'answer1': 'Option1',
+                          'answer2': 'Option2',
+                          'answer3': 'Option3', })
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],

@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
 from .models import Question, Choice
+from .forms import QuestionForm
 
 # Create your views here.
 
@@ -51,25 +52,27 @@ def vote(request, question_id):
 
 
 def addpoll(request):
-    return render(request, 'polls/addpoll.html')
+    if request.method == 'POST':
+        form = QuestionForm(data=request.POST)
+        if form.is_valid():
+            question = Question.objects.create(
+                question_text=form.cleaned_data['question_title'],
+                pub_date=timezone.now())
+            Choice.objects.create(question=question,
+                                  choice_text=form.cleaned_data['answer1'])
+            Choice.objects.create(question=question,
+                                  choice_text=form.cleaned_data['answer2'])
+            if form.cleaned_data['answer3'] != "":
+                Choice.objects.create(question=question,
+                                      choice_text=form.cleaned_data['answer3'])
+            return HttpResponseRedirect(reverse('polls:index'))
+        else:
+            return render(request, 'polls/addpoll.html', {
+                'error_message': "Seems you didn't put all the necessary data",
+                'questionform': form,
+            })
+        return render(request, 'polls/addpoll.html', {'questionform': form})
 
-
-def addpollpost(request):
-    if request.POST['question_title'] != "":
-        question = Question.objects.create(question_text=request.POST
-                                           ['question_title'],
-                                           pub_date=timezone.now())
-        if request.POST['1'] != "":
-            Choice.objects.create(question=question,
-                                  choice_text=request.POST['1'])
-        if request.POST['2'] != "":
-            Choice.objects.create(question=question,
-                                  choice_text=request.POST['2'])
-        if request.POST['3'] != "":
-            Choice.objects.create(question=question,
-                                  choice_text=request.POST['3'])
     else:
-        return render(request, 'polls/addpoll.html', {
-            'error_message': "You didn't add a title",
-        })
-    return HttpResponseRedirect(reverse('polls:index'))
+        form = QuestionForm()
+        return render(request, 'polls/addpoll.html', {'questionform': form})

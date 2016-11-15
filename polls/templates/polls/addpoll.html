@@ -1,21 +1,30 @@
 {% extends "polls/base.html" %}
+{% load myfilters %}
 {% block mainbody %}
 {% if error_message %}
 <div class="alert alert-danger" role="alert">
 <p><strong>{{ error_message }}</strong></p>
 </div>
 {% endif %}
-<form action="{% url 'polls:addpollpost' %}" method="post">
+<form action="{% url 'polls:addpoll' %}" method="post">
   {% csrf_token %}
-  <div class="form-group">
-    <label for="question_title">Question</label>
-    <input type="text" class="form-control" name="question_title" id="question_title_id">
+  <div class="form-group {% if questionform.question_title.errors %}has-error{% endif %}">
+    <label class="control-label" for="question_title">Question
+      {% if questionform.question_title.errors %}
+        {% for error in questionform.question_title.errors %}
+          -- {{ error }}
+        {% endfor %}
+      {% endif %}</label>
+    {{ questionform.question_title|addcss:'form-control' }}
   </div>
-  <div class="form-group">
-    <label>Answers</label>
-    <input type="text" class="form-control" name="1" id="answer1">
-    <input type="text" class="form-control" name="2" id="answer2">
-    <input type="text" class="form-control" name="3" id="answer3">
+  <div class="form-group {% if questionform.answer1.errors %}has-error{% endif %}">
+    <label class="control-label">Answers
+      {% if questionform.answer1.errors %} -- at least two first fields are required
+      {% elif questionform.answer2.errors %} -- at least two first fields are required
+      {% endif %}</label>
+    {{ questionform.answer1|addcss:'form-control'}}
+    {{ questionform.answer2|addcss:'form-control'}}
+    {{ questionform.answer3|addcss:'form-control'}}
   </div>
 
 <button type="submit" class="btn btn-primary">Add poll</button>

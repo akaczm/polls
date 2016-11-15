@@ -10,5 +10,4 @@ urlpatterns = [
         name='results'),
     url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
     url(r'^addpoll/$', views.addpoll, name='addpoll'),
-    url(r'^addpoll/add/$', views.addpollpost, name='addpollpost'),
 ]
