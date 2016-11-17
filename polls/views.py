@@ -46,8 +46,14 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice",
         })
     else:
+        if request.session.get('has_voted{%s}' % p.pk, False):
+            return render(request, 'polls/detail.html', {
+                'question': p,
+                'error_message': "You have already voted",
+            })
         selected_choice.votes += 1
         selected_choice.save()
+        request.session['has_voted{%s}' % p.pk] = True
         return HttpResponseRedirect(reverse('polls:results', args=(p.id,)))
 
 
@@ -65,6 +71,7 @@ def addpoll(request):
             if form.cleaned_data['answer3'] != "":
                 Choice.objects.create(question=question,
                                       choice_text=form.cleaned_data['answer3'])
+            request.session['has_created'] = question.pk
             return HttpResponseRedirect(reverse('polls:index'))
         else:
             return render(request, 'polls/addpoll.html', {
@@ -81,6 +88,13 @@ def addpoll(request):
 def deletepoll(request, pk):
     p = get_object_or_404(Question, pk=pk)
     if request.method == "POST":
-        p.delete()
+        if request.session.get('has_created') == p.pk:
+            p.delete()
+        else:
+            return render(request, 'polls/detail.html', {
+                'question': p,
+                'error_message':
+                "You do not have permissions to delete this poll",
+            })
         return HttpResponseRedirect(reverse('polls:index'))
     return render(request, 'polls/deletepoll.html', {'pk': pk})

@@ -21,7 +21,9 @@
 <div>
   <p class="text-center">
 <a href="{% url 'polls:index' %}"><button type="button" class="btn btn-primary">Return home</button></a>
+{% if request.session.has_created == question.id %}
 <a href="{% url 'polls:deletepoll' question.id %}"><button type="button" class="btn btn-danger">Delete poll</button></a>
+{% endif %}
 </p>
 </div>
 {% endblock %}

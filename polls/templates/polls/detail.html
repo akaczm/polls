@@ -16,6 +16,12 @@
     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
   {% endfor %}
   </div>
-<button type="submit" class="btn btn-primary" value="Vote">Vote</button>
+  <div>
+  <p class="text-center">
+    <button type="submit" class="btn btn-primary" value="Vote">Vote</button>
+    <a href="{% url 'polls:index' %}"><button type="button" class="btn btn-danger">Return home</button></a>
+    <a href="{% url 'polls:results' question.id %}"><button type="button" class="btn btn-info">View results</button></a>
+  </p>
+</div>
 </form>
 {% endblock %}
