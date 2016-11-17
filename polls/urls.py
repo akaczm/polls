@@ -9,5 +9,6 @@ urlpatterns = [
         views.ResultsView.as_view(),
         name='results'),
     url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
+    url(r'^(?P<pk>[0-9]+)/delete/$', views.deletepoll, name='deletepoll'),
     url(r'^addpoll/$', views.addpoll, name='addpoll'),
 ]

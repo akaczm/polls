@@ -76,3 +76,11 @@ def addpoll(request):
     else:
         form = QuestionForm()
         return render(request, 'polls/addpoll.html', {'questionform': form})
+
+
+def deletepoll(request, pk):
+    p = get_object_or_404(Question, pk=pk)
+    if request.method == "POST":
+        p.delete()
+        return HttpResponseRedirect(reverse('polls:index'))
+    return render(request, 'polls/deletepoll.html', {'pk': pk})

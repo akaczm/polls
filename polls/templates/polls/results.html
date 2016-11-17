@@ -2,9 +2,9 @@
 {% block titleappendix %}details{% endblock %}
 {% block mainbody %}
 <h1>{{ question.question_text }}</h1>
-<ul>
+<ul class="list-unstyled">
   {% for choice in question.choice_set.all %}
-    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    <li><b>{{ choice.choice_text }}</b> -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
     <div class="progress">
   <div class="progress-bar"
        role="progressbar"
@@ -18,7 +18,10 @@
 </div>
   {% endfor %}
 </ul>
-
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
-<a href="{% url 'polls:index' %}">Return home</a>
+<div>
+  <p class="text-center">
+<a href="{% url 'polls:index' %}"><button type="button" class="btn btn-primary">Return home</button></a>
+<a href="{% url 'polls:deletepoll' question.id %}"><button type="button" class="btn btn-danger">Delete poll</button></a>
+</p>
+</div>
 {% endblock %}
