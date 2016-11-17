@@ -12,8 +12,14 @@ from .forms import QuestionForm
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
+    paginate_by = 10
 
     def get_queryset(self):
+        if self.request.GET.get('archive') == "True":
+            return Question.objects.filter(
+                pub_date__lte=timezone.now()
+            ).order_by('-pub_date')
+
         return Question.objects.filter(
             pub_date__lte=timezone.now()
         ).order_by('-pub_date')[:5]
