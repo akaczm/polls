@@ -2,22 +2,30 @@
 {% block titleappendix %}details{% endblock %}
 {% block mainbody %}
 <h1>{{ question.question_text }}</h1>
-<ul class="list-unstyled">
+<table class="table">
+  <colgroup>
+       <col span="1" style="width: 35%;">
+       <col span="1" style="width: 65%;">
+    </colgroup>
   {% for choice in question.choice_set.all %}
-    <li><b>{{ choice.choice_text }}</b> -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
-    <div class="progress">
-  <div class="progress-bar"
-       role="progressbar"
-       aria-valuenow="{{ choice.votes }}"
-       aria-valuemin="0"
-       aria-valuemax="100"
-       style="width: {{ choice.vote_percent }}%;"
-       >
-    <span class="sr-only">{{ choice.vote_percent }}% Complete</span>
-  </div>
-</div>
+    <tr>
+      <td><b>{{ choice.choice_text }}</b></td><td class="text-right"> {{ choice.votes }} vote{{ choice.votes|pluralize }}</td>
+      <tr><td colspan="2">
+        <div class="progress">
+          <div class="progress-bar"
+               role="progressbar"
+               aria-valuenow="{{ choice.votes }}"
+               aria-valuemin="0"
+               aria-valuemax="100"
+               style="width: {{ choice.vote_percent }}%;"
+               >
+               <span class="sr-only">{{ choice.vote_percent }}% Complete</span>
+          </div>
+        </div>
+      </td>
+    </tr>
   {% endfor %}
-</ul>
+</table>
 <div>
   <p class="text-center">
 <a href="{% url 'polls:index' %}"><button type="button" class="btn btn-primary">Return home</button></a>
