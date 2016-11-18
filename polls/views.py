@@ -43,10 +43,12 @@ class ResultsView(generic.DetailView):
     print(model)
 
     def get_context_data(self, **kwargs):
+        queryset = QuestionPost.objects.filter(question=self.get_object()
+                                               ).order_by('-post_date')
         context = super(ResultsView, self).get_context_data(**kwargs)
-        context['question_comments'] = QuestionPost.objects.filter(
-            question=self.get_object()
-        ).order_by('-post_date')[:5]
+        if not self.request.GET.get('showall', '').lower() == "true":
+            queryset = queryset[:3]
+        context['question_comments'] = queryset
         context['form'] = self.form_class
         return context
 
