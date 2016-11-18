@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from .models import Question
+from .models import Question, Choice
 
 # Create your tests here.
 
@@ -155,3 +155,29 @@ class QuestionAddInterfaceTests(TestCase):
             response.context['latest_question_list'],
             []
         )
+
+    def test_post_no_answers(self):
+        """
+        The view shouldn't let a question with no answers pass.
+        """
+        self.client.post(reverse('polls:addpoll'),
+                         {'question_title': 'Question no answers', })
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            []
+        )
+
+    def test_cant_vote_more_than_once(self):
+        q = create_question("Test question", -1)
+        print('Created question %s' % q.pk)
+        a1 = Choice.objects.create(question=q, choice_text="Choice 1")
+        print('Created answer to question %s with id %s' % (q.pk, a1.pk))
+        a2 = Choice.objects.create(question=q, choice_text="Choice 2")
+        print('Created answer to question %s with id %s' % (q.pk, a2.pk))
+        self.client.post(reverse('polls:vote', args=(q.pk,)),
+                         {'choice': a1.pk, })
+        self.client.post(reverse('polls:vote', args=(q.pk,)),
+                         {'choice': a1.pk, })
+        a1 = Choice.objects.get(pk=a1.pk)
+        self.assertEqual(a1.votes, 1)
