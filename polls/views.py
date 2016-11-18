@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
-from .models import Question, Choice
-from .forms import QuestionForm
+from .models import Question, Choice, QuestionPost
+from .forms import QuestionForm, QuestionPostForm
 
 # Create your views here.
 
@@ -39,6 +39,13 @@ class DetailView(generic.DetailView):
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
+    form_class = QuestionPostForm()
+
+    def get_context_data(self, **kwargs):
+        context = super(ResultsView, self).get_context_data(**kwargs)
+        context['question_comments'] = QuestionPost.objects.all()
+        context['form'] = self.form_class
+        return context
 
 
 def vote(request, question_id):
@@ -104,3 +111,28 @@ def deletepoll(request, pk):
             })
         return HttpResponseRedirect(reverse('polls:index'))
     return render(request, 'polls/deletepoll.html', {'pk': pk})
+
+
+def addpost(request, question_id):
+    q = get_object_or_404(Question, pk=question_id)
+    if request.method == "POST":
+        form = QuestionPostForm(data=request.POST)
+        if form.is_valid():
+            QuestionPost.objects.create(
+                question=q,
+                post_date=timezone.now(),
+                author=form.cleaned_data['author'],
+                content=form.cleaned_data['content'],
+            )
+            return HttpResponseRedirect(reverse('polls:results',
+                                        args=(q.id,)))
+        else:
+            return render(request, 'polls/results.html', {
+                'question': q,
+                'error_message':
+                "Your post is invalid",
+                'form': form,
+            })
+    else:
+        return HttpResponseRedirect(reverse('polls:results',
+                                    args=(q.id,)))

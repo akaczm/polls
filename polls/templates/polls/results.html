@@ -34,4 +34,39 @@
 {% endif %}
 </p>
 </div>
+{% if error_message %}
+<div class="alert alert-danger" role="alert">
+<p><strong>{{ error_message }}</strong></p>
+</div>
+{% endif %}
+{% if question.questionpost_set.all %}
+<div>
+  <table class="table">
+    <tr><td>
+  {% for comment in question.questionpost_set.all %}
+    <table class="table">
+      <colgroup>
+           <col span="1" style="width: 60%;">
+           <col span="1" style="width: 40%;">
+        </colgroup>
+      <tr>
+        <td><b>{{ comment.author }}</b></td><td>{{ comment.post_date }}</td>
+      </tr>
+      <tr>
+        <td colspan="2" class="text-justify">{{ comment.content }}</td>
+    </table>
+  {% endfor %}
+  </td><tr>
+  </table>
+</div>
+{% endif %}
+<div>
+  <h2 class="text-center">Add a post</h2>
+  <form action="{% url 'polls:addpost' question.id %}" method="POST">
+    {% csrf_token %}
+    {{ form.author }}<br>
+    {{ form.content }}<br>
+    <button type="submit" class="btn btn-primary" value="Post">Post</button>
+  </form>
+</div>
 {% endblock %}

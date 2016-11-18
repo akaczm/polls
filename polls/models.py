@@ -54,3 +54,13 @@ class Choice(models.Model):
         if total_votes == 0:
             return 0
         return ((self.votes * 100) / total_votes)
+
+
+class QuestionPost(models.Model):
+    question = models.ForeignKey(Question)
+    author = models.CharField(max_length=200)
+    content = models.TextField(max_length=20000)
+    post_date = models.DateTimeField('date published')
+
+    def __str__(self):
+        return self.author
