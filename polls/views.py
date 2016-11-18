@@ -40,10 +40,13 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
     form_class = QuestionPostForm()
+    print(model)
 
     def get_context_data(self, **kwargs):
         context = super(ResultsView, self).get_context_data(**kwargs)
-        context['question_comments'] = QuestionPost.objects.all()
+        context['question_comments'] = QuestionPost.objects.filter(
+            question=self.get_object()
+        ).order_by('-post_date')[:5]
         context['form'] = self.form_class
         return context
 

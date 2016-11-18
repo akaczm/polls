@@ -39,11 +39,11 @@
 <p><strong>{{ error_message }}</strong></p>
 </div>
 {% endif %}
-{% if question.questionpost_set.all %}
+{% if question_comments %}
 <div>
   <table class="table">
     <tr><td>
-  {% for comment in question.questionpost_set.all %}
+  {% for comment in question_comments %}
     <table class="table">
       <colgroup>
            <col span="1" style="width: 60%;">
