@@ -8,7 +8,7 @@
            <col span="1" style="width: 60%;">
            <col span="1" style="width: 40%;">
         </colgroup>
-      <tr>
+      <tr {% if request.session.has_posted == comment.pk %}class="success"{% endif %}>
         <td><b>{{ comment.author }}</b>{% if request.session.has_posted == comment.pk or request.session.has_created == question.id %}
         <a href="{% url 'polls:deletepost' question.id comment.pk %}"><button type="button" class="btn btn-danger btn-xs">Delete</button></a>
         {% endif %}{% if request.session.has_posted == comment.pk %}
