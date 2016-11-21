@@ -12,4 +12,8 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)/delete/$', views.deletepoll, name='deletepoll'),
     url(r'^(?P<question_id>[0-9]+)/addpost/$', views.addpost, name='addpost'),
     url(r'^addpoll/$', views.addpoll, name='addpoll'),
+    url(r'^(?P<question_id>[0-9]+)/deletepost/(?P<post_id>[0-9]+)/$',
+        views.deletepost, name='deletepost'),
+    url(r'^(?P<question_id>[0-9]+)/editpost/(?P<post_id>[0-9]+)/$',
+        views.editpost, name='editpost'),
 ]

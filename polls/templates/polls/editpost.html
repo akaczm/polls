@@ -1,0 +1,18 @@
+{% extends "polls/base.html" %}
+{% load myfilters %}
+{% block mainbody %}
+{% if error_message %}
+<div class="alert alert-danger" role="alert">
+<p><strong>{{ error_message }}</strong></p>
+</div>
+{% endif %}
+<div>
+  <h2 class="text-center">Edit post</h2>
+  <form action="." method="POST">
+    {% csrf_token %}
+    {{ form.author }}<br>
+    {{ form.content }}<br>
+    <button type="submit" class="btn btn-primary" value="Post">Edit</button>
+  </form>
+</div>
+{% endblock %}

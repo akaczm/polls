@@ -40,15 +40,16 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
     form_class = QuestionPostForm()
-    print(model)
 
     def get_context_data(self, **kwargs):
         queryset = QuestionPost.objects.filter(question=self.get_object()
                                                ).order_by('-post_date')
+        comments_all = queryset
         context = super(ResultsView, self).get_context_data(**kwargs)
         if not self.request.GET.get('showall', '').lower() == "true":
             queryset = queryset[:3]
         context['question_comments'] = queryset
+        context['question_comments_all'] = comments_all
         context['form'] = self.form_class
         return context
 
@@ -123,12 +124,13 @@ def addpost(request, question_id):
     if request.method == "POST":
         form = QuestionPostForm(data=request.POST)
         if form.is_valid():
-            QuestionPost.objects.create(
+            post = QuestionPost.objects.create(
                 question=q,
                 post_date=timezone.now(),
                 author=form.cleaned_data['author'],
                 content=form.cleaned_data['content'],
             )
+            request.session['has_posted'] = post.pk
             return HttpResponseRedirect(reverse('polls:results',
                                         args=(q.id,)))
         else:
@@ -141,3 +143,52 @@ def addpost(request, question_id):
     else:
         return HttpResponseRedirect(reverse('polls:results',
                                     args=(q.id,)))
+
+
+def deletepost(request, question_id, post_id):
+    print(question_id)
+    print(post_id)
+    q = get_object_or_404(Question, pk=question_id)
+    p = get_object_or_404(QuestionPost, pk=post_id)
+    if request.method == "POST":
+        if ((request.session.get('has_posted') == p.pk) or
+           request.session.get('has_created') == q.pk):
+            p.delete()
+            return HttpResponseRedirect(reverse('polls:results',
+                                                args=(q.id,)))
+        else:
+            return render(request, 'polls/results.html', {
+                'question': q,
+                'error_message':
+                "You do not have permissions to delete this comment",
+                'form': QuestionPostForm,
+            })
+    else:
+        return render(request, 'polls/deletepost.html', {'pk': question_id})
+
+
+def editpost(request, question_id, post_id):
+    q = get_object_or_404(Question, pk=question_id)
+    p = get_object_or_404(QuestionPost, pk=post_id)
+    if request.method == "POST":
+        form = QuestionPostForm(data=request.POST)
+        if form.is_valid():
+            p.content = form.cleaned_data['content']
+            p.save()
+            return HttpResponseRedirect(reverse('polls:results',
+                                        args=(q.id,)))
+        else:
+            return render(request, 'polls/editpost.html', {
+                'question': q,
+                'error_message':
+                "Your post is invalid",
+                'form': QuestionPostForm(initial={'author': p.author,
+                                                  'content': p.content, }),
+            })
+    else:
+        return render(request, 'polls/editpost.html', {
+            'question': q,
+            'post': p,
+            'form': QuestionPostForm(initial={'author': p.author,
+                                              'content': p.content, })
+        })

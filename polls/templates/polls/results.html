@@ -39,7 +39,7 @@
 <p><strong>{{ error_message }}</strong></p>
 </div>
 {% endif %}
-{% if question_comments %}
+{% if question_comments_all %}
 <h3> Comments: <small>{{ question_comments.count }}</small></h3>
 <div>
   <table class="table">
@@ -51,7 +51,11 @@
            <col span="1" style="width: 40%;">
         </colgroup>
       <tr>
-        <td><b>{{ comment.author }}</b></td><td>{{ comment.post_date }}</td>
+        <td><b>{{ comment.author }}</b>{% if request.session.has_posted == comment.pk or request.session.has_created == question.id %}
+        <a href="{% url 'polls:deletepost' question.id comment.pk %}"><button type="button" class="btn btn-danger btn-xs">Delete</button></a>
+        {% endif %}{% if request.session.has_posted == comment.pk %}
+        <a href="{% url 'polls:editpost' question.id comment.pk %}"><button type="button" class="btn btn-warning btn-xs">Edit</button></a>
+        {% endif %}</td><td>{{ comment.post_date }}</td>
       </tr>
       <tr>
         <td colspan="2" class="text-justify">{{ comment.content }}</td>
