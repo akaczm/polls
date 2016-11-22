@@ -3,14 +3,23 @@
 
 {% block mainbody %}
 {% if latest_question_list %}
-  <ul>
+  <table class="table table-hover">
+    <th>#</th>
+    <th>Question</th>
+    <th>Total votes</th>
     {% for question in latest_question_list %}
-      <li><a href="{% url 'polls:detail' question.id %}">
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><a href="{% url 'polls:detail' question.id %}">
         {{ question.question_text }}
       </a>
-      </li>
+      </td>
+      <td>
+        {{ question.all_votes}} vote{{ question.all_votes|pluralize}}
+      </td>
+      </tr>
     {% endfor %}
-  </ul>
+  </table>
   {% if is_paginated %}
           <div class="pagination">
               <span class="page-links">
